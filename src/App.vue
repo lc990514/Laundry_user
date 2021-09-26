@@ -1,28 +1,42 @@
 <template>
   <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png">
-    <HelloWorld msg="Welcome to Your Vue.js App"/>
+    <Header></Header>
+    <router-view></router-view>
+    <Footer v-if=
+                "!['/setMeal','/merchant','/login','/cart','/address','/addressEdit','/myMsg','/enableOrder','/myOrder','/order','/winning','/myWinning','/register']
+                .includes(this.$store.getters.getRouterPathNew)"></Footer>
   </div>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld.vue'
+import Header from "@/components/Header";
+import Footer from "@/components/Footer";
 
 export default {
   name: 'App',
   components: {
-    HelloWorld
+    Header,
+    Footer
+  },
+  async mounted() {
+    const user = {
+      id: this.$store.getters.currentUser.id, token: this.$store.getters.currentUser.token
+    };
+    console.log(user);
+    if (user.id != null && user.id !== 0) {
+      this.$api.get("user/token", user).then(res => {
+        this.$store.commit("setUser", res);
+      })
+    }
+    this.$api.get("setMeal/get/all").then(res => {
+      this.$store.commit("setSetMealsList", res)
+    }).catch(reason => {
+      console.log(reason)
+    })
   }
 }
 </script>
 
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+
 </style>
